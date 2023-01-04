@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần mềm quản lí sinh viên</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .nemo {
+            
+            margin:5px;
+            display: flex;
+        }
+        .cv{
+            float: right;
+            margin-top: 29px;
+        }
+        .g-3 {
+            background-color: antiquewhite;
+            margin: auto;
+            
+        } 
+        .name {
+            text-align: center;
+        }
+        .value {
+            color: white;
+        }
+            .col-md-2{
+            float: right;
+            margin: auto;           
+        } 
+            .col-md-6{
+            float: left;
+            width: 45%;
+            
+        } 
+        .right{
+            float: right;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class=" row g-3 ">
+        <h1 class="name">Phần mềm quản lí sinh viên</h1>
+        <form id="MyForm">
+        <div>
+            <div class="col-md-6">
+                <label for="inputten" class="form-label">Tên</label>
+                <input type="text" class="form-control" id="inputten" placeholder="Tên">
+            </div>
+            
+            <div class="col-md-1.5 right">
+                <label for="inputmasv" class="form-label">Mã sv</label>
+                <input type="text" class="form-control" id="inputmasv" placeholder="MSV00001">
+            </div> 
+            <div class="col-md-1.5 right">
+                <label for="inputlop" class="form-label">Lớp</label>
+                <input type="text" class="form-control" id="inputlop" placeholder="IBSK1D1">
+            </div>
+            <div class="col-md-1.5 right">
+                <label for="inputtuoi" class="form-label" >Tuổi</label>
+                <input type="number" class="form-control" id="inputtuoi" placeholder="Tuổi" min="17">
+            </div>
+        </div>
+            
+            <br><div class="clearfix"></div>
+        <div>
+            <div class="col-12">
+            <label for="inputdiachi" class="form-label">Địa chỉ</label>
+            <input type="text" class="form-control" id="inputdiachi" placeholder="12 Chiến thắng">
+            </div>  
+        </div>
+            <div class="nemo">
+                 <div class="ca">               
+                <label for="timkiem" class="form-label">Tim kiem</label>
+                <input type="text" class="form-control" id="timkiem">
+            </div>
+            <div class="cv">
+                <button type="submit" class="btn btn-primary nemo" id="themmoi">Thêm mới</button>
+            </div>
+            </div>
+           
+        </form>
+<div class="table">
+            <table style="color: rgb(137, 44, 117);" class="table table-bordered ">                   
+                 <tr>
+                    <th> STT </th>
+                    <th>Tên</th>
+                    <th> Tuổi </th>
+                    <th> Mã sv</th>
+                    <th> Lớp </th>
+                    <th> Địa chỉ</th>
+                    <th> Hoạt động</th>
+                </tr>
+                <tbody id="student_list_id">
+                </tbody>
+            </table>
+        </div>
+         <script>
+            var studentList = []
+			var currentIndex = -1
+			var json = localStorage.getItem('stdList')
+            if(json != null && json != '') {
+				studentList = JSON.parse(json)
+				showData()
+			}
+            $('#MyForm').submit(function() {
+                console.log('aa')
+                var inputten = $('#inputten').val()
+				var inputtuoi = $('#inputtuoi').val()
+				var inputlop = $('#inputlop').val()
+				var inputmasv = $('#inputmasv').val()
+                var inputdiachi = $('#inputdiachi').val()
+                var std = {
+					'inputten': inputten,
+                    'inputtuoi': inputtuoi,
+					'inputlop': inputlop,
+					'inputmasv': inputmasv,
+                    'inputdiachi':inputdiachi,
+				}
+                if(currentIndex >= 0) {
+					studentList[currentIndex] = std;
+					currentIndex = -1
+				} else {
+					studentList.push(std)
+				}
+                showData()
+            })
+            function addStudent(index){
+                currentIndex = index
+                var std = studentList[index]
+                $('#inputten').val(std.inputten)
+				$('#inputtuoi').val(std.inputtuoi)
+				$('#inputlop').val(std.inputlop)
+				$('#inputmasv').val(std.inputmasv)
+                $('#inputdiachi').val(std.inpudiachi)
+            }
+			function editStudent(index) {
+				currentIndex = index
+				var std = studentList[index]
+				$('#inputten').val(std.inputten)
+				$('#inputtuoi').val(std.inputtuoi)
+				$('#inputlop').val(std.inputlop)
+				$('#inputmasv').val(std.inputmasv)
+                $('#inputdiachi').val(std.inpudiachi)
+			}
+
+            function deleteStudent(index) {
+				var option = confirm
+				if(!option) return
+				studentList.splice(index, 1)
+				showData()
+			}
+            function showData() {
+				
+				$('#student_list_id').empty()
+				
+				for (var i = 0; i < studentList.length; i++) {
+					$('#student_list_id').append(`<tr>
+						<td>${i+1}</td>
+						<td>${studentList[i].inputten}</td>
+						<td>${studentList[i].inputtuoi}</td>
+						<td>${studentList[i].inputmasv}</td>
+						<td>${studentList[i].inputlop}</td>
+                        <td>${studentList[i].inputdiachi}</td>
+						<td >                       
+                            <button class="btn btn-primary demo1" onclick="editStudent(${i})">Sửa</button>
+                            <button class="btn btn-danger demo" onclick="deleteStudent(${i})">Xóa</button>
+                        </td>						
+					</tr>`)
+				}		
+				var json = JSON.stringify(studentList)
+				localStorage.setItem('stdList', json)
+			}
+        </script> 
+    </div>
+</body>
+</html>
